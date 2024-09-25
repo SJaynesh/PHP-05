@@ -7,13 +7,25 @@ class Config
     private $PASSWORD = "";
     private $DB_NAME = "rnw";
 
+    public $conn;
+
     // connect Method
     public function connect()
     {
         // mysqli_connect() // return bool
-        $res = mysqli_connect($this->HOSTNAME, $this->USERNAME, $this->PASSWORD, $this->DB_NAME);
+        $this->conn = mysqli_connect($this->HOSTNAME, $this->USERNAME, $this->PASSWORD, $this->DB_NAME);
 
-        return $res;
+        return $this->conn;
+    }
+
+    public function insertStudent($name, $age, $course)
+    {
+        $this->connect();
+
+        $query = "INSERT INTO students (name, age, course) VALUES('$name', $age, '$course');";
+
+        return mysqli_query($this->conn, $query); // return bool
+
     }
 }
 
