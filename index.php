@@ -28,7 +28,7 @@ if (isset($_REQUEST['btn-submit'])) {
     $res = $config->insertStudent($name, $age, $course);
 
     if ($res) {
-        echo "Record Inserted Successfully...";
+        header("Location: dashboard.php");
     } else {
         echo "Record Insertion  Failed...";
     }

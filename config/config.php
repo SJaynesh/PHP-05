@@ -27,6 +27,17 @@ class Config
         return mysqli_query($this->conn, $query); // return bool
 
     }
+
+    public function fetchStudents()
+    {
+        $this->connect();
+
+        $query = "SELECT * FROM students;";
+
+        $res = mysqli_query($this->conn, $query);// return obj mysqli_result
+
+        return $res;
+    }
 }
 
 ?>
