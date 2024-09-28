@@ -9,12 +9,12 @@ $config = new Config();
 $res = $config->fetchStudents();
 
 
-while ($result = mysqli_fetch_assoc($res)) {
-    echo $result['id'] . " ";
-    echo $result['name'] . " ";
-    echo $result['age'] . " ";
-    echo $result['course'] . "<br>";
-}
+// while ($result = mysqli_fetch_assoc(result: $res)) {
+//     echo $result['id'] . " ";
+//     echo $result['name'] . " ";
+//     echo $result['age'] . " ";
+//     echo $result['course'] . "<br>";
+// }
 
 ?>
 
@@ -33,7 +33,7 @@ while ($result = mysqli_fetch_assoc($res)) {
 
 <div class="container pt-5">
 
-    <div class="col col-6">
+<div class="col col-6">
         <table class="table table-hover  table-success table-bordered">
             <thead>
                 <tr>
@@ -45,19 +45,14 @@ while ($result = mysqli_fetch_assoc($res)) {
             </thead>
 
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Raj</td>
-                    <td>18</td>
-                    <td>Android</td>
-                </tr>
-
-                <tr>
-                    <td>2</td>
-                    <td>Rajshree</td>
-                    <td>19</td>
-                    <td>Web</td>
-                </tr>
+                <?php while ($result = mysqli_fetch_assoc($res)) { ?>
+                    <tr> 
+                        <td><?php echo $result['id']?></td>
+                        <td><?php echo $result['name']?></td>
+                        <td><?php echo $result['age']?></td>
+                        <td><?php echo $result['course']?></td>
+                    </tr>
+                <?php } ?>
             </tbody>
         </table>
     </div>

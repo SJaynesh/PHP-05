@@ -38,6 +38,17 @@ class Config
 
         return $res;
     }
+
+    public function deleteStudent($id)
+    {
+        $this->connect();
+
+        $query = "DELETE FROM students WHERE id=$id;";
+
+        $res = mysqli_query($this->conn, $query);// return 1 || 0    bool
+
+        return $res;
+    } 
 }
 
 ?>

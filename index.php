@@ -19,6 +19,7 @@ $config = new Config();
 // $_REQUEST
 
 
+// Insert Student Data
 if (isset($_REQUEST['btn-submit'])) {
 
     $name = $_GET['name'];
@@ -28,12 +29,52 @@ if (isset($_REQUEST['btn-submit'])) {
     $res = $config->insertStudent($name, $age, $course);
 
     if ($res) {
-        header("Location: dashboard.php");
+        // header("Location: dashboard.php");
+        echo '<div class="container pt-5"><div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Success!</strong> Record Inserted Successfully....
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div></div>';
     } else {
-        echo "Record Insertion  Failed...";
+        echo '<div class="container pt-5"><div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Failure!</strong> Record Insertion Failed....
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div></div>';
+       
     }
+}
 
 
+
+
+//  Fetch All Students Data
+$fetch_stud = $config->fetchStudents();
+
+
+// Delete Student 
+
+if(isset($_REQUEST['btn_delete']))
+{
+
+    $id = $_GET['delete_id'];
+
+    // echo "<h2> $id </h2>";
+
+    $res = $config->deleteStudent($id);
+
+    if ($res) {
+        // header("Location: dashboard.php");
+        echo '<div class="container pt-5"><div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Delete!</strong> Record deleted Successfully....
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div></div>';
+        $fetch_stud = $config->fetchStudents();
+    } else {
+        echo '<div class="container pt-5"><div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Delete!</strong> Record deletion Failed....
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div></div>';
+        $fetch_stud = $config->fetchStudents();       
+    }
 }
 
 
@@ -56,7 +97,7 @@ if (isset($_REQUEST['btn-submit'])) {
     <div class="col col-4">
         <form action="" method="GET">
             Name :
-            <input type="text" class="form-control" name="name" placeholder="Enter your name"> <br>
+            <input type="text" class="form-control" name="name"  placeholder="Enter your name"> <br>
 
             Age :
 
@@ -70,6 +111,41 @@ if (isset($_REQUEST['btn-submit'])) {
                 <button  class="btn btn-success" >Reset</button>
             </div>
         </form>
+    </div>
+
+    <br>
+    <br>
+
+    <div class="col col-5">
+        <table class="table table-hover  table-success table-bordered text-center">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NAME</th>
+                    <th>AGE</th>
+                    <th>COURSE</th>
+                    <th colspan="2">Action</th>
+                </tr> 
+            </thead>
+
+            <tbody>
+                <?php while ($result = mysqli_fetch_assoc($fetch_stud)) { ?>
+                    <tr> 
+                        <td><?php echo $result['id'] ?></td>
+                        <td><?php echo $result['name'] ?></td>
+                        <td><?php echo $result['age'] ?></td>
+                        <td><?php echo $result['course'] ?></td>
+                        <td><button class="btn btn-success">Edit</button></td>
+                        <td>
+                            <form method="GET">
+                             <input type="hidden" name="delete_id" Value="<?php echo $result['id'] ?>">
+                            <button class="btn btn-danger" name="btn_delete">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
     </div>
 
 </div>
