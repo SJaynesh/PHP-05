@@ -22,9 +22,9 @@ $config = new Config();
 // Insert Student Data
 if (isset($_REQUEST['btn-submit'])) {
 
-    $name = $_GET['name'];
-    $age = $_GET['age'];
-    $course = $_GET['course'];
+    $name = $_REQUEST['name'];
+    $age = $_REQUEST['age'];
+    $course = $_REQUEST['course'];
 
     $res = $config->insertStudent($name, $age, $course);
 
@@ -39,7 +39,7 @@ if (isset($_REQUEST['btn-submit'])) {
         <strong>Failure!</strong> Record Insertion Failed....
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div></div>';
-       
+
     }
 }
 
@@ -52,10 +52,9 @@ $fetch_stud = $config->fetchStudents();
 
 // Delete Student 
 
-if(isset($_REQUEST['btn_delete']))
-{
+if (isset($_REQUEST['btn_delete'])) {
 
-    $id = $_GET['delete_id'];
+    $id = $_REQUEST['delete_id'];
 
     // echo "<h2> $id </h2>";
 
@@ -73,7 +72,47 @@ if(isset($_REQUEST['btn_delete']))
         <strong>Delete!</strong> Record deletion Failed....
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div></div>';
-        $fetch_stud = $config->fetchStudents();       
+        $fetch_stud = $config->fetchStudents();
+    }
+}
+
+
+// Update Student
+
+$edit_student_data = null;
+
+if(isset($_REQUEST['btn_edit']))
+{
+    $edit_id = $_REQUEST['edit_id'];
+
+    $res = $config->fetchSingleStudent($edit_id);
+
+   $edit_student_data =  mysqli_fetch_assoc($res);
+}
+
+if(isset($_REQUEST['btn-update']))
+{
+    $id = $_REQUEST['id'];
+    $name = $_REQUEST['name'];
+    $age = $_REQUEST['age'];
+    $course = $_REQUEST['course'];
+
+
+    $res = $config->updateStudent($name, $age, $course, $id);
+
+    if ($res) {
+        // header("Location: dashboard.php");
+        echo '<div class="container pt-5"><div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Update!</strong> Record Updated Successfully....
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div></div>';
+        $fetch_stud = $config->fetchStudents();
+    } else {
+        echo '<div class="container pt-5"><div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Update!</strong> Record Updation Failed....
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div></div>';
+        $fetch_stud = $config->fetchStudents();
     }
 }
 
@@ -95,19 +134,26 @@ if(isset($_REQUEST['btn_delete']))
 <div class="container pt-5">
 
     <div class="col col-4">
-        <form action="" method="GET">
+        <form action="" method="POST">
+            <input type="hidden" name="id" value="<?php if($edit_student_data != null) { echo $edit_student_data['id'];}?>">
             Name :
-            <input type="text" class="form-control" name="name"  placeholder="Enter your name"> <br>
+            <input type="text" class="form-control" name="name" value = "<?php if($edit_student_data != null){echo $edit_student_data['name'];} ?>" placeholder="Enter your name"> <br>
 
             Age :
 
-            <input type="number" class="form-control" name="age" placeholder="Enter your age"> <br>
+            <input type="number" class="form-control" name="age" value = "<?php if($edit_student_data != null){echo $edit_student_data['age'];} ?>" placeholder="Enter your age"> <br>
 
             Course :
-            <input type="text" class="form-control" name="course" placeholder="Enter your course"> <br>
+            <input type="text" class="form-control" name="course" value = "<?php if($edit_student_data != null){echo $edit_student_data['course'];} ?>" placeholder="Enter your course"> <br>
 
             <div class="text-center">
-                <button  class="btn btn-primary" name="btn-submit">Submit</button>
+                <button  class="btn <?php if($edit_student_data==null) { echo "btn-primary";} else { echo "btn-warning";}?>" name="<?php if($edit_student_data==null) { echo "btn-submit";} else { echo "btn-update";}?>">
+                    <?php if($edit_student_data==null) {?>
+                    Add Student
+                    <?php }else {?>
+                    Update
+                    <?php }?>
+                </button>
                 <button  class="btn btn-success" >Reset</button>
             </div>
         </form>
@@ -130,19 +176,22 @@ if(isset($_REQUEST['btn_delete']))
 
             <tbody>
                 <?php while ($result = mysqli_fetch_assoc($fetch_stud)) { ?>
-                    <tr> 
-                        <td><?php echo $result['id'] ?></td>
-                        <td><?php echo $result['name'] ?></td>
-                        <td><?php echo $result['age'] ?></td>
-                        <td><?php echo $result['course'] ?></td>
-                        <td><button class="btn btn-success">Edit</button></td>
-                        <td>
-                            <form method="GET">
-                             <input type="hidden" name="delete_id" Value="<?php echo $result['id'] ?>">
-                            <button class="btn btn-danger" name="btn_delete">Delete</button>
+                        <tr> 
+                            <td><?php echo $result['id'] ?></td>
+                            <td><?php echo $result['name'] ?></td>
+                            <td><?php echo $result['age'] ?></td>
+                            <td><?php echo $result['course'] ?></td>
+                            <form method="POST">
+                            <input type="hidden" name="edit_id" value="<?php echo $result['id'] ?>">
+                             <td><button class="btn btn-warning" name="btn_edit">Edit</button></td>
                             </form>
-                        </td>
-                    </tr>
+                            <td>
+                                <form method="POST">
+                                 <input type="hidden" name="delete_id" value="<?php echo $result['id'] ?>">
+                                 <button class="btn btn-danger" name="btn_delete">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
                 <?php } ?>
             </tbody>
         </table>
